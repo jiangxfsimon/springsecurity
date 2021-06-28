@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>update page</h1>
+
+<span sec:authentication="name"></span><br>
+<span sec:authentication="principal.username"></span><br>
+<span sec:authentication="authorities"></span><br>
+<span sec:authentication="details.remoteAddress"></span><br>
+<span sec:authentication="details.sessionId"></span>
+
+<button sec:authorize="hasAuthority('role')">添加</button>
+<button sec:authorize="hasAuthority('/del')">删除</button>
+<button sec:authorize="hasAuthority('/role')">修改</button>
+<button sec:authorize="hasAuthority('/select')">查看</button>
+
+<button sec:authorize="hasRole('abc')">添加</button>
+<button sec:authorize="hasRole('abc')">删除</button>
+<button sec:authorize="hasRole('ROLE_admin')">修改</button>
+<button sec:authorize="hasRole('ROLE_approver')">查看</button>
+
+
+</body>
+</html>
