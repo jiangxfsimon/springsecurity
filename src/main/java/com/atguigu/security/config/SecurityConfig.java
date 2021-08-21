@@ -77,8 +77,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
 //                .anyRequest().access("@myServiceImpl.hasPermission(request,authentication)");//自定义access方法
                 .anyRequest().authenticated();//所有请求必须认证后才能访问(必须登陆)，必须放在最后
 
-        http.rememberMe().tokenRepository(persistentTokenRepository()).userDetailsService(userDetailsService);
 
+        http.rememberMe().tokenRepository(persistentTokenRepository()).userDetailsService(userDetailsService);
         http.exceptionHandling().accessDeniedHandler(myAccessDeniedHandler);
 
 
