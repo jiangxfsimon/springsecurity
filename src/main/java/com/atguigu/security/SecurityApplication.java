@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 @EnableOpenApi
 @SpringBootApplication
 @MapperScan("com.atguigu.security.mapper")
-@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)//开启全局注解
 public class SecurityApplication {
 
     public static void main(String[] args) {

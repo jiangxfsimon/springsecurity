@@ -58,7 +58,7 @@ public class LoginController {
         return "error";
     }
 
-    @PreAuthorize("hasAnyRole('')")
+    @PreAuthorize("hasAnyRole('ROLE_update')")
     @GetMapping("/toUpdate")
     public String update(){
         return "update";
