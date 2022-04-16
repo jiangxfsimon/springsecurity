@@ -11,5 +11,15 @@
     <a href="/toUpdate">update page</a><br>
     <a href="/test/logout">退出</a>
 
+
+    <ul>
+        <li sec:authentication="principal.username"></li>
+        <li sec:authentication="principal.authorities"></li>
+        <li sec:authentication="principal.accountNonExpired">
+        </li>
+        <li sec:authentication="principal.accountNonLocked"></li>
+        <li sec:authentication="principal.credentialsNonExpired">
+        </li>
+    </ul>
 </body>
 </html>

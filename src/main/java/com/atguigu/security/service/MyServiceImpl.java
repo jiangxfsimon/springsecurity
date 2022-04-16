@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
-@Service
+//@Service
 public class MyServiceImpl {
 
     public boolean hasPermission(HttpServletRequest request, Authentication authentication){
