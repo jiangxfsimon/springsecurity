@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出-->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<Configuration status="INFO" monitorInterval="60">
+    <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+    <Properties>
+        <Property name="App">third-api</Property>
+        <Property name="logDir">/home/migu/portal-third-api/logs</Property>
+        <Property name="splitSize">100 MB</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- 输出控制台日志的配置 -->
+        <Console name="console" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 输出日志的格式 -->
+            <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
+            <!-- %logger{36} 表示 Logger 名字最长36个字符 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- 打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+        <RollingFile name="infoLog" fileName="${logDir}/${App}-info.log"
+                     filePattern="${logDir}/${App}-info-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS z} [%thread] %-5level %logger{36} %L %M - %msg%xEx%n"/>
+            <Policies>
+                <!--interval属性用来指定多久滚动一次，默认是1， 单位到底是月 天 小时 分钟，根据filePattern配置的日期格式而定，本处的格式为天，则默认为1天-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!--按大小分-->
+                <SizeBasedTriggeringPolicy size="${splitSize}"/>
+            </Policies>
+            <Filters>
+                <!-- 只记录info和warn级别信息 -->
+                <!--<ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>-->
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
+            <DefaultRolloverStrategy max="1000"/>
+        </RollingFile>
+
+        <!-- 存储所有error信息 -->
+        <RollingFile name="errorLog" fileName="${logDir}/${App}-error.log"
+                     filePattern="${logDir}/${App}-error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS z} [%thread] %-5level %logger{36} %L %M - %msg%xEx%n"/>
+            <Policies>
+                <!--interval属性用来指定多久滚动一次，默认是1， 单位到底是月 天 小时 分钟，根据filePattern配置的日期格式而定，本处的格式为天，则默认为1天-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!--按大小分-->
+                <SizeBasedTriggeringPolicy size="${splitSize}"/>
+            </Policies>
+            <Filters>
+                <!-- 只记录error级别信息 -->
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
+            <DefaultRolloverStrategy max="1000"/>
+        </RollingFile>
+
+        <!--大云5分钟宽带查询接口单独打印-->
+        <RollingFile name="dayunLog" fileName="${logDir}/${App}-dayunInfo.log"
+                     filePattern="${logDir}/${App}-dayunInfo-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS z} [%thread] %-5level %logger{36} %L %M - %msg%xEx%n"/>
+            <Policies>
+                <!--interval属性用来指定多久滚动一次，默认是1， 单位到底是月 天 小时 分钟，根据filePattern配置的日期格式而定，本处的格式为天，则默认为1天-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!--按大小分-->
+                <SizeBasedTriggeringPolicy size="${splitSize}"/>
+            </Policies>
+            <Filters>
+                <!-- 只记录info和warn级别信息 -->
+                <!--<ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>-->
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
+            <DefaultRolloverStrategy max="1000"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- root logger 配置,全局配置，默认所有的Logger都继承此配置 -->
+        <!-- AsyncRoot - 异步记录日志 - 需要LMAX Disruptor的支持 -->
+        <Root level="info">
+            <AppenderRef ref="infoLog"/>
+            <AppenderRef ref="errorLog"/>
+            <AppenderRef ref="console"/>
+        </Root>
+
+        <!--将logger中的 additivity 属性配置为 false，则这个logger不会将日志流反馈到root中。-->
+        <Logger name="dayunLogger" additivity="true" level="INFO">
+            <!--<appender-ref ref="sendCodeFile" level="INFO" />-->
+            <appender-ref ref="dayunLog" level="INFO" />
+        </Logger>
+
+        <!--第三方的软件日志级别 -->
+        <logger name="org.springframework" level="info" additivity="true">
+        </logger>
+    </Loggers>
+</Configuration>
+<!--
+2、配置文件节点说明
+2.1、根节点Configuration：有 Appenders 和 Loggers 两个子节点。
+        status：用来指定log4j本身打印日志的级别，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出。
+        monitorinterval：用于指定 log4j 自动重新配置的监测间隔时间，单位是秒(s)，最小的间隔时间是5s
+2.2、Appenders 节点
+        有常见的 Console、RollingFile、File 三种子节点。
+
+2.2.1、Console：用于定义输出到控制台的 Appender。
+
+        name：指定 Appender 的名字。
+        target：SYSTEM_OUT 或 SYSTEM_ERR,一般只设置默认:SYSTEM_OUT。
+        PatternLayout：输出格式，不设置默认为 %m%n。
+        Filters：
+            ThresholdFilter：
+            a）ThresholdFilter属性：onMatch表示匹配设定的日志级别后是DENY还是ACCEPT，onMismatch表示不匹配设定的日志级别是DENY还是ACCEPT还是NEUTRAL
+            b）上面说的match/misMatch指的是高于或等于设定的日志级别。所以，要先定义日志级别高的Filter。
+            onMatch和onMismatch都有三个属性值，分别为Accept、DENY和NEUTRAL
+            这两个配置项的三个属性值详细解释：
+            onMatch="ACCEPT" 表示匹配该级别及以上
+            onMatch="DENY" 表示不匹配该级别及以上
+            onMatch="NEUTRAL" 表示该级别及以上的，由下一个filter处理，如果当前是最后一个，则表示匹配该级别及以上
+            onMismatch="ACCEPT" 表示匹配该级别以下
+            onMismatch="NEUTRAL" 表示该级别及以下的，由下一个filter处理，如果当前是最后一个，则不匹配该级别以下的
+            onMismatch="DENY" 表示不匹配该级别以下的
+2.2.2、File：用于定义输出到指定位置的文件的 Appender。
+
+        name：指定 Appender 的名字。
+        fileName：指定输出日志的目的文件带全路径的文件名。
+        PatternLayout：输出格式，不设置默认为 %m%n。
+2.2.3、RollingFile：定义指定方式触发新的 Appender。
+
+        name：Appender 名字。
+        fileName：输出日志文件的名字（带全路径）。
+        filePattern：归档日志文件的文件名模式。
+        PatternLayout：输出格式，不设置默认为：%m%n。
+        Policies：指定滚动日志的策略。
+                TimeBasedTriggeringPolicy：Policies 子节点，基于时间的滚动策略。interval 属性根据日期模式中最具体的时间单位进行翻转的频率，默认为1。单位到底是月 天 小时 分钟，根据filePattern配置的日期格式而定，本项目中的格式为天，则默认为1天
+                SizeBasedTriggeringPolicy：Policies 子节点，基于文件大小的滚动策略。size属性用来定义每个日志文件的大小。大小可以以字节为单位指定，后缀为KB，MB或GB，例如20MB。
+        DefaultRolloverStrategy：用来指定同一文件夹最多有几个日志文件时开始删除最旧的，创建新的(通过max属性)。
+
+        Filters：
+            ThresholdFilter：
+            a）ThresholdFilter属性：onMatch表示匹配设定的日志级别后是DENY还是ACCEPT，onMismatch表示不匹配设定的日志级别是DENY还是ACCEPT还是NEUTRAL
+            b）上面说的match/misMatch指的是高于或等于设定的日志级别。所以，要先定义日志级别高的Filter。
+            onMatch和onMismatch都有三个属性值，分别为Accept、DENY和NEUTRAL
+            这两个配置项的三个属性值详细解释：
+            onMatch="ACCEPT" 表示匹配该级别及以上
+            onMatch="DENY" 表示不匹配该级别及以上
+            onMatch="NEUTRAL" 表示该级别及以上的，由下一个filter处理，如果当前是最后一个，则表示匹配该级别及以上
+            onMismatch="ACCEPT" 表示匹配该级别以下
+            onMismatch="NEUTRAL" 表示该级别及以下的，由下一个filter处理，如果当前是最后一个，则不匹配该级别以下的
+            onMismatch="DENY" 表示不匹配该级别以下的
+
+
+2.3、Loggers 节点
+        常见的有 Root 和 Logger 两种节点。
+2.3.1、Root
+
+        每个配置都必须有一个根记录器Root。如果未配置，则将使用默认LoggerConfig，其级别为ERROR，且附加了Console appender。根记录器和其他记录器之间的主要区别是：1.根记录器没有name属性。2.根记录器不支持additivity属性，因为它没有父级。。
+
+        level：日志的输出级别，共8个级别，按照从低到高为 All < Trace < Debug < Info < Warn < Error < Fatal < OFF。
+        AppenderRef：Root 的子节点，用来指定该日志输出到哪个 Appender。
+2.3.2、Logger
+
+        Logger节点用来单独指定日志的形式，比如要为指定包下的class指定不同的日志级别等。
+
+        使用Logger元素必须有一个name属性，root logger不用name元属性。
+        每个Logger可以使用TRACE，DEBUG，INFO，WARN，ERROR，ALL或OFF之一配置级别。如果未指定级别，则默认为ERROR。可以为additivity属性分配值true或false。如果省略该属性，则将使用默认值true。
+
+        Logger还可以配置一个或多个AppenderRef属性。引用的每个appender将与指定的Logger关联。如果在Logger上配置了多个appender，则在处理日志记录事件时会调用每个appender。
+
+        name：用来指定该Logger所适用的类或者类所在的包全路径，继承自Root节点。一般是项目包名或者框架的包名，比如：com.jourwon，org.springframework
+
+        level：日志输出级别，共有8个级别，按照从低到高为：All < Trace < Debug < Info < Warn < Error < Fatal < OFF
+
+        additivity：将logger中的 additivity 属性配置为 false，则这个logger不会将日志流反馈到root中，默认为true
+
+        AppenderRef：Logger的子节点，用来指定该日志输出到哪个Appender，如果没有指定，就会默认继承自Root。如果指定了，那么会在指定的这个Appender和Root的Appender中都会输出，此时我们可以设置Logger的additivity="false"只在自定义的Appender中进行输出。
+
+
+
+
+-->

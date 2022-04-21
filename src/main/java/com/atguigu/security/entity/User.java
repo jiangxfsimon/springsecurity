@@ -4,10 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,13 +23,12 @@ public class User implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
-    private Boolean enabled;
-    private Boolean accountNonExpired;
-    private Boolean accountNonLocked;
-    private Boolean credentialsNonExpired;
+    private Boolean enable;
+    private Boolean accountNotExpired;
+    private Boolean accountNotLocked;
+    private Boolean credentialsNotExpired;
     @TableField(exist = false)
     private List<Role> roles = null;
-
 
     public User(String username, String password) {
         this.username=username;
@@ -69,38 +65,38 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountNonExpired;
+        return accountNotExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return accountNonLocked;
+        return accountNotLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.credentialsNonExpired;
+        return this.credentialsNotExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return this.enable;
     }
 
 
-//    public Boolean getEnabled() {
-//        return this.enabled;
-//    }
-//
-//    public Boolean getAccountNonExpired() {
-//        return this.accountNonExpired;
-//    }
-//
-//    public Boolean getAccountNonLocked() {
-//        return this.accountNonLocked;
-//    }
-//
-//    public Boolean getCredentialsNonExpired() {
-//        return this.credentialsNonExpired;
-//    }
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public Boolean getAccountNotExpired() {
+        return accountNotExpired;
+    }
+
+    public Boolean getAccountNotLocked() {
+        return accountNotLocked;
+    }
+
+    public Boolean getCredentialsNotExpired() {
+        return credentialsNotExpired;
+    }
 }

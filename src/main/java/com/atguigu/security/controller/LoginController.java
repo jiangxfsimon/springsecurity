@@ -1,9 +1,11 @@
 package com.atguigu.security.controller;
 
 import com.google.code.kaptcha.Producer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import javax.sql.DataSource;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+@Slf4j
 @Controller
 public class LoginController {
     @Autowired
@@ -57,16 +60,24 @@ public class LoginController {
         System.out.println("error....");
         return "error";
     }
-
-    @PreAuthorize("hasAnyRole('ROLE_update')")
-    @GetMapping("/toUpdate")
-    public String update(){
-        return "update";
-    }
-
+//    @PreFilter()
+    @PreAuthorize("hasAnyRole('ROLE_update','ROLE_user')")
     @PostMapping("/success.html")
     public String success(){
         return "success";
+    }
+
+//    @PreAuthorize("hasPermission(@mySecurityExpressionRoot.hasAuthority())")
+    @GetMapping("/toUpdate")
+    public String update(){
+        log.error("测试log4j2。。。。。。。。。。。。。。。");
+        return "update";
+    }
+
+//    @PreAuthorize("hasPermission()")
+    @PostMapping("post")
+    public String post(){
+        return "post success";
     }
 
 

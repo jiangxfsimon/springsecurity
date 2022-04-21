@@ -16,7 +16,7 @@ public class SecurityApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(SecurityApplication.class, args);
-        Stream.of(run.getBeanDefinitionNames()).forEach(System.out::println);
+//        Stream.of(run.getBeanDefinitionNames()).forEach(System.out::println);
     }
 
 }

@@ -1,16 +1,19 @@
-package com.atguigu.security.service;
+package com.atguigu.security.expression;
 
+import com.atguigu.security.entity.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
-//@Service
-public class MyServiceImpl {
+@Component("mySecurityExpressionRoot")
+public class MySecurityExpressionRoot {
 
     public boolean hasPermission(HttpServletRequest request, Authentication authentication){
         Object principal = authentication.getPrincipal();//获取主体
@@ -23,5 +26,12 @@ public class MyServiceImpl {
             return authorities.contains(new SimpleGrantedAuthority(request.getRequestURI()));
         }
         return false;
+    }
+
+    public boolean hasAuthority(String authority){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        Collection<SimpleGrantedAuthority> authorities = principal.getAuthorities();
+        return authorities.contains(authority);
     }
 }

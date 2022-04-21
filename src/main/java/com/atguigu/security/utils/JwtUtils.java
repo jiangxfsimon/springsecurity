@@ -157,10 +157,10 @@ public class JwtUtils {
         user.setUsername("Simon");
         user.setPassword("{noop}123");
 
-        user.setEnabled(true);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
+        user.setEnable(true);
+        user.setAccountNotExpired(true);
+        user.setAccountNotLocked(true);
+        user.setCredentialsNotExpired(true);
         Role role = new Role();
         role.setName("ABC");
         Role role1 = new Role();

@@ -51,7 +51,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 Map<String, String> userInfo = new ObjectMapper().readValue(request.getInputStream(), Map.class);
                 String kaptcha = userInfo.get(getKaptchaParameter());//获取验证码
 //                String kaptchaSession = (String) request.getSession().getAttribute(getKaptchaParameter());
-                String kaptchaSession = (String) redisTemplate.opsForValue().get(getKaptchaParameter());
+//                String kaptchaSession = (String) redisTemplate.opsForValue().get(getKaptchaParameter());
                 //验证登录验证码
 //                if (!StringUtils.isEmpty(kaptcha) && !StringUtils.isEmpty(kaptchaSession) &&
 //                        kaptcha.equalsIgnoreCase(kaptchaSession)) {

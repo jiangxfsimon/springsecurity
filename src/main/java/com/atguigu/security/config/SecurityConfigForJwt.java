@@ -111,30 +111,33 @@ public class SecurityConfigForJwt extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
+            .cors().and()
+
             .authorizeRequests()
-                .antMatchers("/druid/**","/login.html","/vc.jpg").permitAll() //表单提交认证方式
+                .antMatchers("/druid/**","/login.html","/vc.jpg","/login").permitAll() //表单提交认证方式
                 .antMatchers("/success.html").hasAnyRole("user")
                 .antMatchers("/anonymous").anonymous()//已认证用户不能访问匿名资源
                 .anyRequest().authenticated()
                 //此时访问受保护的资源会默认跳转到SS中默认的登录界面(使用异常可以处理)
                 .and().exceptionHandling()
-                .authenticationEntryPoint(((request, response, authException) -> {
+                .authenticationEntryPoint(((request, response, authException) -> {//认证失败处理逻辑
                     Map<String,Object> map=new HashMap<>();
                     map.put("cause",authException.getMessage());
                     map.put("msg","认证失败");
                     map.put("code",HttpStatus.UNAUTHORIZED.value());
                     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setStatus(HttpStatus.OK.value());
+
                     response.getWriter().println(new ObjectMapper().writeValueAsString(map));
                     response.getWriter().flush();
                     response.getWriter().close();
                 }))//处理
-                .accessDeniedHandler(((request, response, accessDeniedException) -> {
+                .accessDeniedHandler(((request, response, accessDeniedException) -> {//授权失败处理逻辑
                     Map<String,Object> map=new HashMap<>();
                     map.put("cause", accessDeniedException.getMessage());
                     map.put("msg", "无权限");
-                    map.put("code",HttpStatus.UNAUTHORIZED.value());
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    map.put("code",HttpStatus.FORBIDDEN.value());
+                    response.setStatus(HttpStatus.OK.value());
                     response.setContentType("application/json;charset=UTF-8");
                     response.getWriter().println(new ObjectMapper().writeValueAsString(map));
                     response.getWriter().flush();
