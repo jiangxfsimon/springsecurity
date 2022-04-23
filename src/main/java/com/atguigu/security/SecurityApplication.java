@@ -5,11 +5,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import springfox.documentation.oas.annotations.EnableOpenApi;
+//import springfox.documentation.oas.annotations.EnableOpenApi;
 
 import java.util.stream.Stream;
 
-@EnableOpenApi
+//@EnableOpenApi
 @SpringBootApplication
 @MapperScan("com.atguigu.security.mapper")
 public class SecurityApplication {
